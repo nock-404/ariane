@@ -1,0 +1,330 @@
+/* Auswertungen. Farben ausschließlich über die Atelier-Variablen; die
+   Auslastung liest sich wie im Raster — neutral, bis es eng wird. */
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.statLabel {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.statValue {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat[data-tone="good"] .statValue {
+  color: var(--moss);
+}
+.stat[data-tone="warn"] .statValue {
+  color: var(--warn);
+}
+.stat[data-tone="crit"] .statValue {
+  color: var(--crit);
+}
+
+.statHint {
+  font-size: 11.5px;
+  color: var(--dim);
+}
+
+/* ── Rahmen einer Abbildung ── */
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendMark {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  border: 0 solid transparent;
+}
+
+.legendMark[data-dashed] {
+  height: 0;
+  border-top-width: 2px;
+  border-top-style: dashed;
+}
+
+/* ── Kurve ── */
+
+.plotWrap {
+  position: relative;
+}
+
+.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+
+.axis {
+  fill: var(--dim);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.area {
+  fill: color-mix(in oklab, var(--moss) 12%, transparent);
+}
+
+.lineCapacity {
+  fill: none;
+  stroke: var(--dim);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.75;
+}
+
+.linePlanned {
+  fill: none;
+  stroke: var(--moss);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dotOver {
+  fill: var(--crit);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+}
+
+.crosshair {
+  stroke: color-mix(in oklab, var(--ink) 35%, transparent);
+  stroke-width: 1;
+}
+
+.tooltip {
+  position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  font-size: 11.5px;
+  color: var(--dim);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tooltip b {
+  color: var(--ink);
+  font-size: 12.5px;
+}
+
+.tooltip [data-tone="crit"] {
+  color: var(--crit);
+}
+
+.tooltip [data-tone="ok"] {
+  color: var(--moss);
+}
+
+/* ── Balkenlisten ── */
+
+.barList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) 1fr 58px 118px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.barName {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub {
+  color: var(--faint);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tag {
+  font-size: 10px;
+  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 0 5px;
+}
+
+.swatch {
+  flex: none;
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+}
+
+.barTrack {
+  position: relative;
+  display: flex;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--hair);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.18s ease;
+}
+
+/* Die Hundert-Prozent-Marke. */
+.barMark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: color-mix(in oklab, var(--ink) 30%, transparent);
+}
+
+.barOver {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--crit) 0 3px,
+    color-mix(in oklab, var(--crit) 45%, transparent) 3px 6px
+  );
+}
+
+.barValue {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.barValue[data-tone="crit"] {
+  color: var(--crit);
+}
+
+.barNote {
+  font-size: 11.5px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Budget ── */
+
+.barTrack[data-budget] {
+  background: var(--hair);
+}
+
+.budgetActual {
+  height: 100%;
+  background: color-mix(in oklab, var(--ink) 55%, transparent);
+}
+
+.budgetPlanned {
+  height: 100%;
+  background: color-mix(in oklab, var(--ink) 22%, transparent);
+}
+
+.budgetLimit {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--crit);
+}
+
+.empty {
+  margin: 0;
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--dim);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 720px) {
+  .barRow {
+    grid-template-columns: minmax(90px, 1fr) 1fr 52px;
+  }
+  .barNote {
+    display: none;
+  }
+}

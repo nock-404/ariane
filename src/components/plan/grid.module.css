@@ -1,0 +1,555 @@
+/* Das Raster. Ein Gitter, sonst nichts — Farben kommen ausschließlich
+   aus den Atelier-Variablen. */
+
+.frame {
+  /* Vorgaben; die tatsächlichen Werte setzt das Raster als Inline-Stil. */
+  --lbl-w: 300px;
+  --cell-w: 46px;
+  --row-h: 34px;
+  --row-h-sub: 30px;
+  --head-month: 26px;
+  --head-week: 30px;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  /* --radius-lg kommt aus @theme inline und existiert zur Laufzeit nicht. */
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  /* Die Höhe ergibt sich aus der Flex-Zeile, in der das Raster steht —
+     nie aus einer geratenen Fensterrechnung. */
+  height: 100%;
+  min-height: 0;
+}
+
+.frame:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+/* Breiter als nötig darf es nicht werden, schmaler auch nicht: die Spalten
+   dehnen sich auf freien Platz, unterschreiten aber nie ihre Wunschbreite. */
+.inner {
+  position: relative;
+  width: 100%;
+  min-width: max-content;
+}
+
+/*
+  Die Marke der laufenden Woche ist EIN Element über die ganze Höhe. Als
+  Rahmen je Zelle war sie an jeder Zeilengrenze unterbrochen; gemessen wird
+  die Position an der Kopfzelle, damit sie auch bei gedehnten Spalten sitzt.
+*/
+.todayLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in oklab, var(--moss) 62%, transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Das Stück im Kopf. Es liegt im Kopf selbst, weil die klebende Kopfzeile
+   ein eigener Stapelraum ist — von außen käme man nicht darüber. */
+.todayLineHead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in oklab, var(--moss) 62%, transparent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Kopf ── */
+
+.head {
+  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--surface);
+}
+
+/* Über dem Kopf treten alle Spaltengrenzen hervor — so sieht man, dass
+   dort etwas zu fassen ist, bevor man danach sucht. */
+.head:hover [data-grip]::before {
+  background: color-mix(in oklab, var(--ink) 30%, transparent);
+}
+
+.headRow {
+  display: grid;
+  grid-template-columns: var(--lbl-w) var(--cols-template);
+}
+
+.headCorner {
+  position: sticky;
+  left: 0;
+  z-index: 8;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+}
+
+/* Die Eckzelle der Monatszeile trägt deren Höhe und Schrift, aber den
+   Innenabstand der Eckspalte — sonst rutscht die Beschriftung unter die
+   abgerundete Ecke des Rahmens. */
+.cornerMonth {
+  height: var(--head-month);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.monthBand {
+  position: relative;
+  height: var(--head-month);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  border-bottom: 1px solid var(--hair);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.weekCell {
+  position: relative;
+  min-width: 0;
+  height: var(--head-week);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  color: var(--dim);
+  border-bottom: 1px solid var(--line);
+}
+
+.weekCell[data-today="true"] {
+  color: var(--ink);
+  font-weight: 700;
+  background: color-mix(in oklab, var(--moss) 9%, var(--surface));
+}
+
+.weekCell[data-past="true"]:not([data-today="true"]) {
+  color: var(--faint);
+}
+
+/* ── Zeilen ── */
+
+.row {
+  display: grid;
+  grid-template-columns: var(--lbl-w) var(--cols-template);
+  border-bottom: 1px solid var(--hair);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row[data-depth="0"] {
+  background: var(--surface);
+}
+
+.row[data-depth="0"][data-kind="person"] {
+  border-top: 1px solid var(--line);
+}
+
+.row[data-depth="1"],
+.row[data-depth="2"] {
+  background: var(--raised);
+}
+
+.row[data-dropping="true"] {
+  background: var(--moss-soft);
+}
+
+.label {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: inherit;
+  border-right: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 0 10px;
+  min-width: 0;
+}
+
+.labelText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.25;
+}
+
+.labelMain {
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row[data-depth="0"] .labelMain {
+  font-weight: 600;
+}
+
+.row[data-depth="1"] .labelMain,
+.row[data-depth="2"] .labelMain {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.labelSub {
+  font-size: 10.5px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.indent1 {
+  padding-left: 26px;
+}
+
+.indent2 {
+  padding-left: 44px;
+}
+
+.twisty {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: var(--dim);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.twisty:hover {
+  background: var(--moss-soft);
+  color: var(--ink);
+}
+
+.twisty[data-open="true"] {
+  transform: rotate(90deg);
+}
+
+.twistySpacer {
+  flex: none;
+  width: 18px;
+}
+
+.capNote {
+  flex: none;
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.rowTools {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.row:hover .rowTools,
+.row:focus-within .rowTools {
+  opacity: 1;
+}
+
+/* Der Zuweisen-Knopf bleibt dezent, bis man die Zeile berührt. */
+.row[data-kind="sub"] .twisty[aria-label^="Person auf"] {
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.row[data-kind="sub"]:hover .twisty[aria-label^="Person auf"],
+.row[data-kind="sub"]:focus-within .twisty[aria-label^="Person auf"],
+.row[data-kind="sub"] .twisty[aria-label^="Person auf"][aria-expanded="true"] {
+  opacity: 1;
+}
+
+/* ── Zellen ── */
+
+.cell {
+  position: relative;
+  min-width: 0;
+  height: var(--row-h);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: var(--ink);
+  border-right: 1px solid var(--hair);
+  cursor: default;
+  user-select: none;
+}
+
+.row[data-depth="1"] .cell,
+.row[data-depth="2"] .cell {
+  height: var(--row-h-sub);
+  font-size: 11.5px;
+  color: var(--dim);
+}
+
+.cell[data-month-start="true"] {
+  border-left: 1px solid var(--line);
+}
+
+.cell[data-editable="true"] {
+  cursor: cell;
+}
+
+/* Die laufende Woche wird leicht getönt, statt sie einzurahmen. */
+.cell[data-today="true"] {
+  background: color-mix(in oklab, var(--moss) 4%, transparent);
+}
+
+.bar {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 3px;
+  border-radius: 5px;
+  background: var(--barColor, var(--faint));
+  pointer-events: none;
+}
+
+.value {
+  position: relative;
+  z-index: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell[data-state="empty"] .value {
+  color: color-mix(in oklab, var(--dim) 42%, transparent);
+}
+
+.cell[data-state="over"] .value {
+  color: var(--crit);
+  font-weight: 700;
+}
+
+.cell[data-state="away"] {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 4px,
+    color-mix(in oklab, var(--dim) 22%, transparent) 4px 5px
+  );
+}
+
+.cell[data-state="away"] .value {
+  color: var(--dim);
+  font-size: 10.5px;
+}
+
+.cell[data-inactive="true"] {
+  background-image: linear-gradient(color-mix(in oklab, var(--ink) 3%, transparent) 0 100%);
+}
+
+.cell[data-selected="true"] {
+  background: color-mix(in oklab, var(--moss) 14%, transparent);
+}
+
+.cell[data-focused="true"] {
+  outline: 2px solid var(--moss);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.cell[data-tentative="true"] .bar {
+  background: transparent;
+  border: 1px dashed color-mix(in oklab, var(--moss) 70%, transparent);
+}
+
+.editInput {
+  position: absolute;
+  inset: 1px;
+  z-index: 3;
+  width: calc(100% - 2px);
+  border: 0;
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: center;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  outline: 2px solid var(--moss);
+  outline-offset: -2px;
+}
+
+.editInput::-webkit-outer-spin-button,
+.editInput::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+/* ── Leerzustände ── */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--dim);
+}
+
+.emptyTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.hint {
+  font-size: 12.5px;
+  max-width: 44ch;
+  line-height: 1.5;
+}
+
+/* ── Namensspalte breiter oder schmaler ziehen ── */
+
+.labelResizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  z-index: 8;
+  width: 7px;
+  cursor: col-resize;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  touch-action: none;
+}
+
+.labelResizer::after {
+  content: "";
+  position: absolute;
+  inset: 4px 3px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.12s ease;
+}
+
+.labelResizer:hover::after,
+.labelResizer[data-dragging="true"]::after {
+  background: var(--moss);
+}
+
+.labelResizer:focus-visible::after {
+  background: var(--moss);
+}
+
+/* ── Umsortieren und Projektfarbe ── */
+
+.dragHandle {
+  flex: none;
+  width: 13px;
+  display: grid;
+  place-items: center;
+  color: var(--faint);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.row:hover .dragHandle,
+.row:focus-within .dragHandle {
+  opacity: 1;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.dragSpacer {
+  flex: none;
+  width: 13px;
+}
+
+.row[data-lifting="true"] {
+  opacity: 0.4;
+}
+
+.row[data-dropping="assign"] {
+  background: var(--moss-soft);
+}
+
+.row[data-dropping="sort"] .label {
+  box-shadow: inset 0 2px 0 0 var(--moss);
+}
+
+.stripe {
+  flex: none;
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--rowColor, var(--pc-none));
+}
+
+/* ── Team-Summenzeile ── */
+
+.row[data-kind="team"] {
+  position: sticky;
+  top: calc(var(--head-month) + var(--head-week));
+  z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.row[data-kind="team"] .label {
+  background: var(--surface);
+}
+
+.row[data-kind="team"] .cell {
+  font-weight: 600;
+}
+
+.row[data-kind="team"] .bar {
+  opacity: 0.55;
+}
+
+.monthLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Kurz hervorheben, wenn man aus der Teamliste zu einer Person springt. */
+.row[data-flash="true"] .label,
+.row[data-flash="true"] .cell {
+  animation: arianeFlash 1.6s ease-out;
+}
+
+@keyframes arianeFlash {
+  0%,
+  40% {
+    background-color: color-mix(in oklab, var(--moss) 22%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}

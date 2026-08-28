@@ -1,0 +1,15 @@
+# Lokale Datenbank fuer die Entwicklung. In Produktion laeuft Neon.
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: ariane-db
+    environment:
+      POSTGRES_USER: ariane
+      POSTGRES_PASSWORD: ariane
+      POSTGRES_DB: ariane
+    ports:
+      - "5444:5432"
+    volumes:
+      - ariane-pgdata:/var/lib/postgresql/data
+volumes:
+  ariane-pgdata:

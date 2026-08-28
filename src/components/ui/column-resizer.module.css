@@ -1,0 +1,78 @@
+/*
+  Der Griff ist immer sichtbar: eine Trennlinie an der Spaltengrenze. Ohne
+  sie weiß niemand, dass man dort ziehen kann — und ein Griff, den man erst
+  durch Zufall findet, ist keiner.
+*/
+
+.grip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -5px;
+  z-index: 6;
+  width: 11px;
+  cursor: col-resize;
+  touch-action: none;
+  display: grid;
+  place-items: center;
+}
+
+/*
+  Die ruhende Trennlinie läuft über die volle Höhe ihrer Zelle. Damit
+  stehen Monatsband und Wochenzeile an einer Monatsgrenze übereinander und
+  ergeben eine durchgehende Linie statt zweier verschieden langer Striche.
+*/
+.grip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+  background: var(--line);
+  transition: background 0.12s ease;
+}
+
+/* Wo schon ein Rahmen die Grenze zeichnet, zeichnet der Griff nichts. */
+.quiet::before {
+  background: transparent;
+}
+
+/* Der Balken, der beim Überfahren aufleuchtet. */
+.grip::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 4px;
+  width: 3px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.12s ease;
+}
+
+.grip:hover::before,
+.grip:focus-visible::before,
+.grip[data-dragging="true"]::before {
+  background: transparent;
+}
+
+.grip:hover::after,
+.grip:focus-visible::after,
+.grip[data-dragging="true"]::after {
+  background: var(--moss);
+}
+
+/* Solange gezogen wird, bleibt der Zeiger überall der Ziehzeiger. */
+.grip[data-dragging="true"] {
+  cursor: col-resize;
+}
+
+.grip:focus-visible {
+  outline: none;
+}
+
+/* Der ganze Kopfbereich zeigt: hier kann man Spalten fassen. */
+.headerHint:hover .grip::before {
+  background: color-mix(in oklab, var(--ink) 28%, transparent);
+}

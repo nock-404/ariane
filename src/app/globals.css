@@ -1,0 +1,214 @@
+@import "tailwindcss";
+@import "overlayscrollbars/overlayscrollbars.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Entwurf „Atelier" — ruhig und luftig. Kühles Papier, Moos als Akzent,
+  Apricot nur für Überlast.
+
+  Es gibt genau eine Farbquelle: die Atelier-Variablen unten. Die
+  shadcn-Token (--primary, --border, …) werden darauf abgebildet, damit
+  Kit-Komponenten und eigene Bausteine dieselbe Palette benutzen.
+  Im Code niemals eine Farbe hartkodieren.
+*/
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-hair: var(--hair);
+  --color-moss: var(--moss);
+  --color-moss-soft: var(--moss-soft);
+  --color-crit: var(--crit);
+  --color-crit-soft: var(--crit-soft);
+  --color-warn: var(--warn);
+
+  --font-sans: var(--font-app);
+  --font-heading: var(--font-app);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  /* ── Atelier ── */
+  --bg: #eef1f1;
+  --surface: #ffffff;
+  --raised: #f6f8f8;
+  --ink: #1c2523;
+  --dim: #6a7a78;
+  --faint: #9aa8a6;
+  --line: #dde3e2;
+  --hair: #e9eeed;
+  --moss: #57795a;
+  --moss-soft: #dbe5db;
+  --crit: #c9663c;
+  --crit-soft: #f4ddd1;
+  --warn: #c9a44e;
+
+  /* Projektfarben. Feste Reihenfolge, nicht durchrotiert; ab dem siebten
+     Projekt bleibt es neutral. Geprüft mit dem Paletten-Validator auf
+     Helligkeitsband, Chroma, Farbsehschwächen und Kontrast. */
+  --pc-1: #c23f74;
+  --pc-2: #b1731c;
+  --pc-3: #0d8a7a;
+  --pc-4: #8a4fc4;
+  --pc-5: #5c8c22;
+  --pc-6: #2f6fb5;
+  --pc-none: #8d9997;
+
+  --shadow-soft: 0 1px 2px rgb(28 37 35 / 0.05), 0 10px 30px -16px rgb(28 37 35 / 0.2);
+  --font-app: var(--font-mulish), "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  --radius: 0.5rem;
+  color-scheme: light;
+
+  /* ── shadcn, auf Atelier abgebildet ── */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--moss);
+  --primary-foreground: #f4f7f4;
+  --secondary: var(--raised);
+  --secondary-foreground: var(--ink);
+  --muted: var(--raised);
+  --muted-foreground: var(--dim);
+  --accent: var(--moss-soft);
+  --accent-foreground: var(--ink);
+  --destructive: var(--crit);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--moss);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--moss);
+  --sidebar-primary-foreground: #f4f7f4;
+  --sidebar-accent: var(--moss-soft);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--moss);
+}
+
+.dark {
+  --bg: #141818;
+  --surface: #1b2020;
+  --raised: #212827;
+  --ink: #e6eceb;
+  --dim: #8b9c9a;
+  --faint: #647573;
+  --line: #2b3332;
+  --hair: #232a29;
+  --moss: #93b795;
+  --moss-soft: #2f4233;
+  --crit: #e8956b;
+  --crit-soft: #462f24;
+  --warn: #d9bd72;
+
+  --pc-1: #c85886;
+  --pc-2: #b58231;
+  --pc-3: #2f9d8d;
+  --pc-4: #9a6bd6;
+  --pc-5: #78a33d;
+  --pc-6: #528cc9;
+  --pc-none: #7d8a88;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.32), 0 12px 32px -18px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+
+  --primary-foreground: #16201a;
+  --sidebar-primary-foreground: #16201a;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-app);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  overscroll-behavior-x: none;
+}
+
+::selection {
+  background: var(--moss-soft);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* OverlayScrollbars im Atelier-Ton — native Scrollbalken kommen nirgends vor. */
+.os-theme-ariane {
+  --os-size: 11px;
+  --os-padding-perpendicular: 2px;
+  --os-padding-axis: 2px;
+  --os-track-bg: transparent;
+  --os-track-bg-hover: transparent;
+  --os-track-bg-active: transparent;
+  --os-handle-bg: color-mix(in oklab, var(--ink) 18%, transparent);
+  --os-handle-bg-hover: color-mix(in oklab, var(--ink) 30%, transparent);
+  --os-handle-bg-active: color-mix(in oklab, var(--moss) 70%, transparent);
+  --os-handle-border-radius: 99px;
+  --os-handle-min-size: 40px;
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
