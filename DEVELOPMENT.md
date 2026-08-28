@@ -1,109 +1,107 @@
-# Entwicklung
+# Development
 
-## Einrichten
+## Setup
 
 ```bash
-docker compose up -d      # Postgres auf Port 5444
+docker compose up -d      # Postgres on port 5444
 pnpm install
 pnpm db:migrate
-pnpm db:seed              # optional: erfundene Startdaten
+pnpm db:seed              # optional: invented starter data
 pnpm dev
 ```
 
-### Umgebungsvariablen
+### Environment variables
 
-`.env.local`, Vorlage in `.env.example`:
+`.env.local`, template in `.env.example`:
 
-| Variable | Bedeutung |
+| Variable | Meaning |
 |---|---|
-| `DATABASE_URL` | Postgres-Verbindung |
-| `ARIANE_PASSWORD` | Planen, ändern, Stammdaten pflegen |
-| `ARIANE_PASSWORD_LESEN` | Nur schauen und exportieren. Leer lassen = kein Lesezugang |
+| `DATABASE_URL` | Postgres connection |
+| `ARIANE_PASSWORD` | Plan, edit, maintain master data |
+| `ARIANE_PASSWORD_LESEN` | View and export only. Leave empty to disable read access |
 
-### Befehle
+### Commands
 
 | | |
 |---|---|
-| `pnpm dev` | Entwicklungsserver |
-| `pnpm build` | Migration + Production-Build |
-| `pnpm db:generate` | Migration aus dem Schema erzeugen |
-| `pnpm db:migrate` | Migrationen anwenden |
-| `pnpm db:seed` | Beispieldaten (leert vorher alle Tabellen) |
+| `pnpm dev` | Development server |
+| `pnpm build` | Migration + production build |
+| `pnpm db:generate` | Generate a migration from the schema |
+| `pnpm db:migrate` | Apply migrations |
+| `pnpm db:seed` | Sample data (truncates every table first) |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm lint` | ESLint |
 
-Das Seed-Skript beginnt mit einem `truncate`. Zeigt `DATABASE_URL` nicht auf
-localhost, bricht es ab — es sei denn, `ARIANE_SEED_FORCE=ja` ist gesetzt.
+The seed script starts with a `truncate`. If `DATABASE_URL` doesn't point at
+localhost it aborts — unless `ARIANE_SEED_FORCE=ja` is set.
 
-## Aufbau
+## Structure
 
 ```
-src/lib/weeks.ts       Wochenrechnung, alles in UTC, eine Woche ist ihr Montag
-src/lib/holidays.ts    Feiertage je Region, ohne externe Abhängigkeit
-src/lib/capacity.ts    die Kapazitätsformel und die Typen des Datensatzes
-src/lib/rows.ts        Zeilenmodell und Zellwerte für beide Ansichten
-src/lib/plan.ts        ein Ladevorgang, ein Datensatz
-src/lib/store.ts       Client-Zustand mit Historie und gesammeltem Speichern
-src/lib/reports.ts     Auswertungen, gerechnet auf demselben Datensatz
-src/lib/session.ts     Rollenprüfung für jede Server Action
-src/lib/themes.ts      die zehn Farbthemen, eine Quelle für das Stylesheet
-src/app/actions.ts     Server Actions
-src/components/plan    Raster, Teamliste, Werkzeugleiste
-src/components/stamm   Personen und Projekte pflegen
-src/components/reports Kennzahlen, Kurve, Balken, Budgets
+src/lib/weeks.ts       week arithmetic, all UTC; a week is its Monday
+src/lib/holidays.ts    holidays per region, no external dependency
+src/lib/capacity.ts    the capacity formula and the dataset types
+src/lib/rows.ts        row model and cell values for both views
+src/lib/plan.ts        one load, one dataset
+src/lib/store.ts       client state with history and batched saving
+src/lib/reports.ts     reports, computed on the same dataset
+src/lib/session.ts     role check for every server action
+src/lib/themes.ts      the ten themes, one source for the stylesheet
+src/app/actions.ts     server actions
+src/components/plan    grid, roster, toolbar
+src/components/stamm   maintain people and projects
+src/components/reports key figures, curve, bars, budgets
 ```
 
-### Warum der Datensatz komplett geladen wird
+### Why the whole dataset is loaded at once
 
-Ein Team mal gut hundert Wochen ist klein genug, um alles auf einmal zu laden.
-Jede Nachladerei würde das Bedienen nur zäh machen. Während des Tippens ist der
-Client die Quelle der Wahrheit; geschrieben wird gesammelt und mit Verzögerung,
-damit jede Zahl sofort steht.
+A team times a hundred-odd weeks is small enough to load in one go. Any
+lazy-loading would only make editing sluggish. While you type, the client is the
+source of truth; writes are batched and delayed so every number appears
+instantly.
 
-### Feiertage
+### Holidays
 
-Ohne externe Abhängigkeit. Die beweglichen Tage hängen alle am Ostersonntag, der
-Rest steht fest. Eine Person hat eine **Feiertagsregion**, keinen Wohnort:
-maßgeblich ist, wo sie ihre Arbeitsleistung erbringt.
+No external dependency. The movable feasts all hang off Easter Sunday; the rest
+are fixed. A person has a **holiday region**, not a home address: what matters is
+where they perform their work.
 
-Der Maßstab ist nicht „steht im Gesetzblatt", sondern „an diesem Tag wird dort
-tatsächlich nicht gearbeitet" — nur so stimmt die Kapazität. Die Abweichungen
-sind in `src/lib/holidays.ts` im Kopfkommentar begründet.
+The yardstick is not "it's in the statute book" but "on this day people there
+genuinely don't work" — that's the only way the capacity number is right. The
+deviations are justified in the header comment of `src/lib/holidays.ts`.
 
-## Zugang
+## Access
 
-Statt Benutzerkonten gibt es zwei Passwörter. Die Rolle steckt im Cookie und
-wird in **jeder** Server Action geprüft (`requireWriter` in
-`src/lib/session.ts`) — der Schutz im Layout allein reicht nicht, Server Actions
-sind offene Endpunkte.
+Instead of user accounts there are two passwords. The role lives in the cookie
+and is checked in **every** server action (`requireWriter` in
+`src/lib/session.ts`) — guarding the layout alone is not enough, server actions
+are open endpoints.
 
-Der Cookie enthält keine Sitzungsdaten, sondern einen aus dem Passwort
-abgeleiteten HMAC-Beweis; ein geändertes Passwort entwertet damit sofort alle
-Cookies. Sobald das Werkzeug wirklich benutzt wird, kommt `better-auth` darüber,
-ohne dass sich am Rest etwas ändert.
+The cookie holds no session data, only an HMAC proof derived from the password;
+changing the password therefore invalidates every cookie at once. Once the tool
+is genuinely in use, `better-auth` goes on top without anything else changing.
 
-## Gestaltung
+## Design
 
-Entwurf „Atelier": kühles Papier, Moos als Akzent, Apricot ausschließlich für
-Überlast, Mulish als Schrift. Farben stehen als CSS-Variablen in
-`src/app/globals.css` und werden auf die shadcn-Token abgebildet — im Code steht
-keine einzige Farbe fest.
+Draft "Atelier": cool paper, moss as the accent, apricot exclusively for
+overload, Mulish as the typeface. Colours live as CSS variables in
+`src/app/globals.css` and are mapped onto the shadcn tokens — not a single
+colour is hardcoded in a component.
 
-Die zehn Themen liegen in `src/lib/themes.ts` und setzen dieselben Variablen;
-das Stylesheet wird daraus erzeugt, es gibt also keine zweite Quelle. Die Wahl
-steckt im Browser des Nutzers, nicht in der Datenbank.
+The ten themes live in `src/lib/themes.ts` and set the same variables; the
+stylesheet is generated from them, so there is no second source. The choice is
+stored in the user's browser, not in the database.
 
-Native Scrollbalken kommen nirgends vor — alles Scrollbare läuft über
-OverlayScrollbars. `window.confirm` ebenso wenig: Rückfragen laufen über
+Native scrollbars appear nowhere — everything scrollable runs through
+OverlayScrollbars. Same for `window.confirm`: prompts go through
 `src/components/ui/confirm.tsx`.
 
 ## Deployment
 
-Läuft als gewöhnliche Next.js-App gegen eine Postgres-Datenbank. Der Build führt
-die Migrationen selbst aus — `pnpm build` ruft `src/lib/db/migrate.ts` vor
+Runs as an ordinary Next.js app against a Postgres database. The build applies
+the migrations itself — `pnpm build` calls `src/lib/db/migrate.ts` before
 `next build`.
 
-Wird die App mit echten Personendaten betrieben, gehört sie hinter einen
-Zugangsschutz: In der Planung stehen Namen und Leistungsdaten von Menschen. Vor
-einem produktiven Einsatz sind die betrieblichen und datenschutzrechtlichen
-Voraussetzungen zu klären.
+If you run this with real personnel data, put it behind access control: the plan
+contains people's names and performance data. Clear the relevant employment-law
+and data-protection requirements before putting it into production.

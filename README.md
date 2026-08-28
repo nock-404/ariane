@@ -1,12 +1,15 @@
 <div align="center">
 
-# Ariane
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.png">
+  <img alt="Ariane — capacity planning for engineering teams" src=".github/banner-light.png" width="100%">
+</picture>
 
-### Wer ist wann auf welchem Projekt — und wer hat noch Luft.
+### Who is on which project, when — and who still has room.
 
-Kapazitätsplanung für Entwicklungsteams. Ein Wochenraster über zwölf Monate,
-in dem eine Team Lead ihre Leute auf Teilprojekte verteilt und **sofort sieht,
-wo jemand über der Kapazität liegt**.
+Capacity planning for engineering teams. A twelve-month week grid where a team
+lead spreads people across subprojects and **immediately sees who is over
+capacity**.
 
 `Next.js 16` · `React 19` · `Postgres` · `Drizzle` · `Tailwind 4`
 
@@ -14,66 +17,69 @@ wo jemand über der Kapazität liegt**.
 
 ---
 
-## Warum
+## Why
 
-Kapazitätsplanung passiert in den meisten Teams in einer Excel-Tabelle, die
-niemand pflegen will. Ariane ist der Versuch, genau diese Tabelle zu bauen —
-nur so, dass sie rechnet, statt nur Zahlen zu halten.
+In most teams, capacity planning lives in a spreadsheet nobody wants to
+maintain. Ariane is an attempt to build exactly that spreadsheet — except it
+calculates instead of just holding numbers.
 
-Alles hängt an einer Formel:
+Everything hangs on one formula:
 
 ```
-verfügbar(Person, Woche) = Netto-Kapazität × (5 − Urlaubstage − Feiertage) / 5
-Auslastung               = verplante Stunden / verfügbar
+available(person, week) = net capacity × (5 − vacation days − holidays) / 5
+utilisation             = planned hours / available
 ```
 
-Netto-Kapazität ist das, was nach Meetings und internem Kram für Projekte
-übrig bleibt. Rot wird es erst über 100 Prozent.
+Net capacity is what's left for project work after meetings and internal
+overhead. It only turns red above 100 percent.
 
-## Was es kann
+## What it does
 
 | | |
 |---|---|
-| **Wochenraster** | Gut ein Jahr, umschaltbar zwischen Wochen und Monaten, Stunden und Prozent |
-| **Zwei Ansichten** | Nach Personen und nach Projekten — dieselben Daten, andere Gruppierung |
-| **Excel-artige Eingabe** | Zelle anklicken und tippen. Umschalt für Mehrfachauswahl, Pfeiltasten zum Bewegen, ⌘Z für rückgängig |
-| **⌘C / ⌘V** | Tab-getrennt — Excel ist die Zwischenablage. Alt+Pfeil schiebt eine ganze Zuweisung um eine Woche |
-| **Urlaub als Zeitraum** | „5. bis 14. August" — Arbeitstage je Woche rechnet Ariane aus, Wochenenden und Feiertage zählen nicht |
-| **Feiertage nach Region** | 16 deutsche Länder und 12 weitere. Maßgeblich ist, wo jemand *arbeitet*, nicht wo er wohnt |
-| **Kapazität mit Stichtag** | Ein Wechsel auf Teilzeit verbiegt die Vergangenheit nicht |
-| **Budget je Teilprojekt** | Verbraucht / verplant / Budget als ein Balken |
-| **Angebote** | Ein- und ausblendbar, zählen standardmäßig nicht zur Auslastung |
-| **Auswertungen** | Kennzahlen, Verlauf je Woche, Auslastung je Person, Überlast-Blöcke, Budgets — mit Zeitraum-Wähler |
-| **Excel-Export** | Für die Runde, in der niemand das Werkzeug aufmacht |
-| **Umsortieren per Ziehen** | Personen, Projekte, Teilprojekte — am Griff in der Namensspalte |
-| **Zehn Farbthemen** | Atelier, Nord, Solarized, Dracula, Gruvbox, Tokyo Night, Everforest, Rosé Pine, GitHub, Catppuccin — je mit Hell und Dunkel |
+| **Week grid** | A little over a year, switchable between weeks and months, hours and percent |
+| **Two views** | By person and by project — same data, different grouping |
+| **Spreadsheet-style entry** | Click a cell and type. Shift for multi-select, arrow keys to move, ⌘Z to undo |
+| **⌘C / ⌘V** | Tab-separated, so Excel is the clipboard. Alt+Arrow shifts an entire assignment by one week |
+| **Vacation as a date range** | "Aug 5 to 14" — Ariane works out the working days per week; weekends and holidays don't count |
+| **Region-aware holidays** | 16 German states and 12 more countries. What matters is where someone *works*, not where they live |
+| **Capacity with an effective date** | Switching to part time doesn't retroactively bend the past |
+| **Budget per subproject** | Spent / planned / budget as a single bar |
+| **Quotes** | Toggle them in and out; they don't count towards utilisation by default |
+| **Reports** | Key figures, weekly trend, utilisation per person, overload blocks, budgets — with a period picker |
+| **Excel export** | For the meeting where nobody opens the tool |
+| **Drag to reorder** | People, projects, subprojects — by the handle in the name column |
+| **Ten colour themes** | Atelier, Nord, Solarized, Dracula, Gruvbox, Tokyo Night, Everforest, Rosé Pine, GitHub, Catppuccin — each with light and dark |
 
-## Farbe ist Information, keine Deko
+## Colour is information, not decoration
 
-Die Auslastung bleibt bis 85 Prozent **neutral** — ein Raster, in dem alles bunt
-ist, sagt nichts. Erst wenn es eng wird, kommt Farbe: Bernstein ab 85, Akzent bei
-genau voll, Apricot darüber.
+Utilisation stays **neutral up to 85 percent** — a grid where everything is
+colourful tells you nothing. Colour only arrives when things get tight: amber
+from 85, accent at exactly full, apricot above.
 
-Projektfarben sind Identität: dieselbe Farbe steht in jeder Ansicht für dasselbe
-Projekt. Sechs feste Töne, mit einem Paletten-Validator auf Helligkeitsband,
-Chroma, Farbsehschwächen und Kontrast geprüft — in beiden Modi. Ab dem siebten
-Projekt bleibt es neutral; der Name steht ohnehin in jeder Zeile.
+Project colours are identity: the same colour means the same project in every
+view. Six fixed tones, checked with a palette validator for lightness band,
+chroma, colour vision deficiency and contrast — in both modes. From the seventh
+project on it stays neutral; the name is in every row anyway.
 
-## Loslegen
+## Getting started
 
 ```bash
-docker compose up -d      # Postgres auf Port 5444
+docker compose up -d      # Postgres on port 5444
 pnpm install
 pnpm db:migrate
-pnpm db:seed              # erfundene, aber plausible Startdaten
+pnpm db:seed              # invented but plausible starter data
 pnpm dev
 ```
 
-Umgebungsvariablen in `.env.local`, Vorlage in `.env.example`.
+Environment variables go in `.env.local`, template in `.env.example`.
 
-Mehr zu Aufbau, Deployment und den Entwurfsentscheidungen:
+More on structure, deployment and the design decisions:
 **[DEVELOPMENT.md](DEVELOPMENT.md)**
 
-## Lizenz
+> **Note on language:** the UI and the source comments are in German — the tool
+> was built for a German-speaking team. The docs are English.
+
+## License
 
 MIT
